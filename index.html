@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1E3A8A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Gurias Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Paytone+One&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #1E3A8A;
+      --blue-light:  #3B5FBF;
+      --pink:        #F9A8D4;
+      --pink-dark:   #EC4899;
+      --cream:       #FFF8F0;
+      --white:       #FFFFFF;
+      --text:        #1E293B;
+      --muted:       #64748B;
+      --radius:      18px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top:    env(safe-area-inset-top, 0px);
+      --nav-h:       60px;
+      --bottom-h:    64px;
+    }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+      padding-bottom: calc(var(--bottom-h) + var(--safe-bottom));
+    }
+
+    /* ════════════════════════════════
+       TOP NAV
+    ════════════════════════════════ */
+    .topnav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      height: calc(var(--nav-h) + var(--safe-top));
+      padding-top: var(--safe-top);
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      box-shadow: 0 2px 16px rgba(30,58,138,.35);
+    }
+
+    .topnav-logo { height: 40px; }
+
+    /* Desktop links — hidden by default, shown via JS class */
+    .desktop-links {
+      display: none;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .desktop-links a {
+      color: rgba(255,255,255,.82);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: .875rem;
+      transition: color .2s;
+      white-space: nowrap;
+    }
+    .desktop-links a:hover { color: var(--white); }
+    .desktop-links .nav-cta {
+      background: var(--pink);
+      color: var(--blue) !important;
+      padding: .45rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 900;
+      transition: background .2s, color .2s;
+    }
+    .desktop-links .nav-cta:hover { background: var(--pink-dark); color: var(--white) !important; }
+
+    /* Hamburger */
+    .hamburger {
+      width: 44px; height: 44px;
+      background: none; border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      border-radius: 10px;
+      transition: background .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hamburger:active { background: rgba(255,255,255,.15); }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2.5px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: transform .3s, opacity .3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+    /* ════════════════════════════════
+       DRAWER (mobile)
+    ════════════════════════════════ */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 300;
+    }
+    .drawer-overlay.open { display: block; }
+
+    .drawer {
+      position: fixed;
+      top: 0; right: 0;
+      width: min(300px, 85vw);
+      height: 100%;
+      background: var(--blue);
+      z-index: 400;
+      transform: translateX(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      padding-top: calc(var(--nav-h) + var(--safe-top) + 1rem);
+      padding-bottom: calc(var(--bottom-h) + var(--safe-bottom) + 1rem);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+
+    .drawer nav {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+      padding: 0 1rem;
+    }
+    .drawer nav a {
+      color: rgba(255,255,255,.85);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: .85rem 1rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .drawer nav a:active { background: rgba(255,255,255,.15); }
+    .drawer nav a .nav-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+
+    .drawer-cta {
+      margin: 1.5rem 1rem 0;
+      display: block;
+      background: var(--pink-dark);
+      color: var(--white) !important;
+      text-align: center;
+      font-weight: 900 !important;
+      font-size: 1rem !important;
+      padding: 1rem !important;
+      border-radius: 50px !important;
+    }
+    .drawer-cta:active { background: #db2777 !important; }
+
+    /* ════════════════════════════════
+       BOTTOM TAB BAR (mobile only)
+    ════════════════════════════════ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 200;
+      background: var(--white);
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      height: calc(var(--bottom-h) + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      box-shadow: 0 -4px 16px rgba(30,58,138,.08);
+    }
+    .bottom-nav a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+      -webkit-tap-highlight-color: transparent;
+      padding: .5rem 0;
+      transition: color .15s;
+    }
+    .bottom-nav a .tab-icon { font-size: 1.25rem; line-height: 1; }
+    .bottom-nav a.active    { color: var(--blue); }
+
+    /* ════════════════════════════════
+       HERO
+    ════════════════════════════════ */
+    #hero {
+      min-height: 100svh;
+      padding-top: calc(var(--nav-h) + var(--safe-top));
+      background: linear-gradient(155deg, var(--blue) 0%, var(--blue-light) 55%, #93C5FD 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      padding-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      background: rgba(249,168,212,.12);
+      border-radius: 50%;
+      top: -120px; right: -120px;
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute;
+      width: 350px; height: 350px;
+      background: rgba(249,168,212,.08);
+      border-radius: 50%;
+      bottom: -80px; left: -80px;
+      pointer-events: none;
+    }
+
+    .hero-logo {
+      width: min(220px, 65vw);
+      filter: drop-shadow(0 6px 24px rgba(0,0,0,.22));
+      animation: float 4s ease-in-out infinite;
+      position: relative; z-index: 1;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    .hero-text {
+      position: relative; z-index: 1;
+      margin-top: 1.75rem;
+      max-width: 360px;
+    }
+    .hero-tagline {
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.65;
+    }
+    .hero-tagline span {
+      display: block;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--pink);
+      margin-bottom: .4rem;
+      line-height: 1.3;
+    }
+    .hero-btn {
+      margin-top: 2rem;
+      display: inline-block;
+      background: var(--pink);
+      color: var(--blue);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(249,168,212,.5);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .hero-btn:hover  { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(249,168,212,.55); }
+    .hero-btn:active { transform: scale(.97); }
+
+    /* ════════════════════════════════
+       SECTIONS SHARED
+    ════════════════════════════════ */
+    section:not(#hero) { scroll-margin-top: calc(var(--nav-h) + var(--safe-top)); }
+    section            { padding: 3.5rem 1.5rem; }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      display: inline-block;
+      background: var(--pink);
+      color: var(--blue);
+      font-weight: 900;
+      font-size: .7rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .3rem .9rem;
+      border-radius: 50px;
+      margin-bottom: .85rem;
+    }
+
+    h2 {
+      font-family: 'Paytone One', sans-serif;
+      font-size: clamp(1.75rem, 3vw, 2.4rem);
+      color: var(--blue);
+      line-height: 1.2;
+      margin-bottom: .85rem;
+    }
+
+    p.lead {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 580px;
+    }
+
+    /* ════════════════════════════════
+       SOBRE
+    ════════════════════════════════ */
+    #sobre { background: var(--white); }
+
+    .sobre-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+      align-items: start;
+    }
+
+    .sobre-logo {
+      display: flex;
+      justify-content: center;
+    }
+    .sobre-logo img {
+      width: min(220px, 60vw);
+      filter: drop-shadow(0 6px 20px rgba(30,58,138,.13));
+    }
+
+    .sobre-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .card-feature {
+      background: var(--cream);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: .9rem;
+      border-left: 4px solid var(--pink-dark);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card-feature:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 16px rgba(30,58,138,.09);
+    }
+    .card-feature .icon  { font-size: 1.6rem; line-height: 1; flex-shrink: 0; }
+    .card-feature h3     { font-size: .95rem; font-weight: 800; color: var(--blue); margin-bottom: .15rem; }
+    .card-feature p      { font-size: .875rem; color: var(--muted); line-height: 1.5; }
+
+    /* ════════════════════════════════
+       COMO PARTICIPAR
+    ════════════════════════════════ */
+    #como { background: var(--cream); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .step {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      box-shadow: 0 2px 10px rgba(30,58,138,.06);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .step:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(30,58,138,.1);
+    }
+    .step-num {
+      width: 42px; height: 42px;
+      background: var(--blue);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Paytone One', sans-serif;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .step-body h3 { font-weight: 800; color: var(--blue); font-size: .95rem; margin-bottom: .2rem; }
+    .step-body p  { font-size: .875rem; color: var(--muted); line-height: 1.5; }
+
+    /* ════════════════════════════════
+       EVENTOS PASSADOS
+    ════════════════════════════════ */
+    #eventos-passados { background: var(--blue); }
+    #eventos-passados h2    { color: var(--white); }
+    #eventos-passados p.lead { color: rgba(255,255,255,.75); }
+
+    /* mobile: horizontal scroll */
+    .gallery-scroll {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-top: 2rem;
+      padding-bottom: .5rem;
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+    .gallery-scroll::-webkit-scrollbar { display: none; }
+
+    .gallery-item {
+      flex: 0 0 72vw;
+      max-width: 260px;
+      scroll-snap-align: start;
+      background: rgba(255,255,255,.1);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.25rem;
+      border: 1px solid rgba(255,255,255,.15);
+      transition: background .2s;
+    }
+    .gallery-item:hover { background: rgba(255,255,255,.17); }
+    .gallery-item .evt-icon { font-size: 2.2rem; margin-bottom: .7rem; }
+    .gallery-item h3 { color: var(--white); font-weight: 800; font-size: .95rem; margin-bottom: .35rem; }
+    .gallery-item p  { color: rgba(255,255,255,.65); font-size: .875rem; line-height: 1.5; }
+    .gallery-item .evt-date {
+      display: inline-block;
+      margin-top: .7rem;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--pink);
+      letter-spacing: .06em;
+    }
+
+    .scroll-hint {
+      text-align: center;
+      color: rgba(255,255,255,.4);
+      font-size: .75rem;
+      margin-top: .75rem;
+    }
+
+    /* ════════════════════════════════
+       AGENDA
+    ════════════════════════════════ */
+    #agenda { background: var(--white); }
+
+    .agenda-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .agenda-item {
+      background: var(--cream);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      align-items: center;
+      gap: 1rem;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .agenda-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(30,58,138,.1);
+    }
+    .agenda-date {
+      text-align: center;
+      background: var(--blue);
+      color: var(--white);
+      border-radius: 12px;
+      padding: .55rem .4rem;
+    }
+    .agenda-date .day   { font-family: 'Paytone One', sans-serif; font-size: 1.45rem; line-height: 1; }
+    .agenda-date .month { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; opacity: .8; }
+    .agenda-info h3 { font-weight: 800; color: var(--blue); font-size: .92rem; margin-bottom: .2rem; }
+    .agenda-info p  { font-size: .85rem; color: var(--muted); line-height: 1.4; }
+    .agenda-badge {
+      margin-top: .45rem;
+      display: inline-block;
+      background: var(--pink);
+      color: var(--blue);
+      font-size: .7rem;
+      font-weight: 900;
+      padding: .2rem .7rem;
+      border-radius: 50px;
+    }
+
+    /* ════════════════════════════════
+       INSTAGRAM
+    ════════════════════════════════ */
+    #instagram { background: var(--white); }
+
+    .ig-handle {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      color: var(--blue-light);
+      font-weight: 800;
+      font-size: .9rem;
+      text-decoration: none;
+      margin-top: .35rem;
+      margin-bottom: 1.75rem;
+      transition: color .2s;
+    }
+    .ig-handle:hover { color: var(--pink-dark); }
+    .ig-handle svg { flex-shrink: 0; }
+
+    #behold-widget { width: 100%; min-height: 200px; }
+
+    .ig-placeholder {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .ig-placeholder-item {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .ig-placeholder-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(249,168,212,.15), rgba(30,58,138,.07));
+    }
+    .ig-setup-banner {
+      margin-top: 1.25rem;
+      background: var(--cream);
+      border: 2px dashed var(--pink-dark);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .ig-setup-banner p  { font-size: .875rem; color: var(--muted); line-height: 1.7; }
+    .ig-setup-banner strong { color: var(--blue); }
+    .ig-setup-banner a  { color: var(--pink-dark); font-weight: 700; }
+
+    /* ════════════════════════════════
+       FORMS
+    ════════════════════════════════ */
+    #sugestoes  { background: var(--cream); }
+
+    .form-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem;
+      box-shadow: 0 4px 20px rgba(30,58,138,.07);
+      margin-top: 2rem;
+      max-width: 600px;
+    }
+
+    .form-group { margin-bottom: 1.1rem; }
+
+    label {
+      display: block;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: .35rem;
+      font-size: .875rem;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      font-size: 16px; /* prevents iOS zoom */
+      padding: .85rem 1rem;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      transition: border-color .2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+    textarea { resize: vertical; min-height: 110px; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background: var(--blue);
+      color: var(--white);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1.05rem;
+      padding: 1rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .2s, transform .15s;
+    }
+    .btn:hover  { background: var(--blue-light); }
+    .btn:active { transform: scale(.97); }
+    .btn-pink   { background: var(--pink-dark); }
+    .btn-pink:hover { background: #db2777; }
+
+    /* ════════════════════════════════
+       INSCRIÇÃO
+    ════════════════════════════════ */
+    #inscricao {
+      background: linear-gradient(155deg, var(--blue) 0%, var(--blue-light) 100%);
+    }
+    #inscricao h2    { color: var(--white); }
+    #inscricao p.lead { color: rgba(255,255,255,.8); }
+    #inscricao .form-card {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: none;
+    }
+    #inscricao label { color: rgba(255,255,255,.9); }
+    #inscricao input,
+    #inscricao textarea,
+    #inscricao select {
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.25);
+      color: var(--white);
+    }
+    #inscricao input::placeholder,
+    #inscricao textarea::placeholder { color: rgba(255,255,255,.4); }
+    #inscricao input:focus,
+    #inscricao textarea:focus,
+    #inscricao select:focus { border-color: var(--pink); }
+    #inscricao select option { background: var(--blue); color: var(--white); }
+    #inscricao .btn { background: var(--pink-dark); font-size: 1.1rem; padding: 1.1rem; }
+    #inscricao .btn:hover { background: #db2777; }
+
+    /* ════════════════════════════════
+       FOOTER
+    ════════════════════════════════ */
+    footer {
+      background: #0F1E5C;
+      color: rgba(255,255,255,.6);
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: .85rem;
+    }
+    footer strong { color: var(--pink); }
+
+    /* ════════════════════════════════
+       TABLET  ≥ 640px
+    ════════════════════════════════ */
+    @media (min-width: 640px) {
+      section { padding: 4rem 2rem; }
+
+      .sobre-cards { grid-template-columns: 1fr 1fr; }
+
+      .steps { grid-template-columns: 1fr 1fr; }
+
+      .gallery-item { flex: 0 0 280px; }
+    }
+
+    /* ════════════════════════════════
+       DESKTOP  ≥ 960px
+    ════════════════════════════════ */
+    @media (min-width: 960px) {
+      /* Nav */
+      .hamburger    { display: none; }
+      .desktop-links { display: flex; }
+
+      /* Body / bottom bar */
+      body { padding-bottom: 0; }
+      .bottom-nav { display: none; }
+
+      /* Sections */
+      section { padding: 5.5rem 2.5rem; }
+
+      /* Hero: side by side */
+      #hero {
+        min-height: 100svh;
+        flex-direction: row;
+        justify-content: center;
+        text-align: left;
+        gap: 4rem;
+      }
+      .hero-logo { width: 320px; animation: float 4s ease-in-out infinite; }
+      .hero-text  { margin-top: 0; max-width: 480px; }
+      .hero-tagline      { font-size: 1.15rem; }
+      .hero-tagline span { font-size: 1.65rem; }
+      .hero-btn { display: inline-block; width: auto; }
+
+      /* Sobre: logo left, cards right */
+      .sobre-inner {
+        grid-template-columns: 260px 1fr;
+        gap: 3rem;
+        align-items: start;
+      }
+      .sobre-logo img { width: 240px; }
+
+      /* Steps: 4 columns */
+      .steps { grid-template-columns: repeat(4, 1fr); }
+      .step   { flex-direction: column; text-align: center; }
+      .step-num { margin: 0 auto .75rem; }
+
+      /* Gallery: grid instead of scroll */
+      .gallery-scroll {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        overflow-x: visible;
+        scroll-snap-type: none;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .gallery-item { flex: none; max-width: none; }
+      .scroll-hint  { display: none; }
+
+      /* Agenda */
+      .agenda-item { grid-template-columns: 70px 1fr auto; }
+
+      /* Instagram: wider grid */
+      .ig-placeholder { grid-template-columns: repeat(6, 1fr); }
+
+      /* Forms: centered */
+      .form-card { padding: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <header class="topnav">
+    <img src="Logo.png" alt="Gurias Community" class="topnav-logo" />
+
+    <div class="desktop-links">
+      <a href="#sobre">Sobre</a>
+      <a href="#como">Como funciona</a>
+      <a href="#eventos-passados">Eventos</a>
+      <a href="#agenda">Agenda</a>
+      <a href="#instagram">Instagram</a>
+      <a href="#sugestoes">Sugestões</a>
+      <a href="#inscricao" class="nav-cta">Quero entrar!</a>
+    </div>
+
+    <button class="hamburger" id="menuBtn" aria-label="Abrir menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- Drawer overlay -->
+  <div class="drawer-overlay" id="overlay"></div>
+
+  <!-- Drawer -->
+  <div class="drawer" id="drawer">
+    <nav>
+      <a href="#sobre"            class="drawer-link"><span class="nav-icon">💜</span> Sobre</a>
+      <a href="#como"             class="drawer-link"><span class="nav-icon">👋</span> Como funciona</a>
+      <a href="#eventos-passados" class="drawer-link"><span class="nav-icon">🎉</span> Eventos</a>
+      <a href="#agenda"           class="drawer-link"><span class="nav-icon">🗓️</span> Agenda</a>
+      <a href="#instagram"        class="drawer-link"><span class="nav-icon">📸</span> Instagram</a>
+      <a href="#sugestoes"        class="drawer-link"><span class="nav-icon">💡</span> Sugestões</a>
+    </nav>
+    <a href="#inscricao" class="drawer-cta drawer-link">Quero entrar! ✨</a>
+  </div>
+
+  <!-- Hero -->
+  <section id="hero">
+    <img class="hero-logo" src="Logo.png" alt="Gurias Community" />
+    <div class="hero-text">
+      <p class="hero-tagline">
+        <span>Conexões reais com mulheres que querem o mesmo que você.</span>
+        Liberdade para participar quando e onde quiser.
+      </p>
+      <a href="#inscricao" class="hero-btn">Quero fazer parte ✨</a>
+    </div>
+  </section>
+
+  <!-- Sobre -->
+  <section id="sobre">
+    <div class="container">
+      <span class="section-tag">O que é a comunidade</span>
+      <h2>Um lugar feito para você, guria!</h2>
+      <p class="lead">Conexões reais com mulheres que querem o mesmo que você. Liberdade para participar quando e onde quiser.</p>
+
+      <div class="sobre-inner">
+        <div class="sobre-logo">
+          <img src="Logo.png" alt="Gurias Community" />
+        </div>
+
+        <div class="sobre-cards">
+          <div class="card-feature">
+            <div class="icon">📚</div>
+            <div>
+              <h3>Clube do livro</h3>
+              <p>Encontro fixo todo mês para discutir leituras e trocar perspectivas entre as gurias.</p>
+            </div>
+          </div>
+          <div class="card-feature">
+            <div class="icon">🥂</div>
+            <div>
+              <h3>Happy Hour mensal</h3>
+              <p>Local escolhido pelas aniversariantes do mês — porque celebrar junto é melhor!</p>
+            </div>
+          </div>
+          <div class="card-feature">
+            <div class="icon">🎨</div>
+            <div>
+              <h3>Pintura de taças e ecobags</h3>
+              <p>Atividade criativa fixa todo mês. Vem criar, relaxar e se conectar!</p>
+            </div>
+          </div>
+          <div class="card-feature">
+            <div class="icon">🩺</div>
+            <div>
+              <h3>Meetings com profissionais</h3>
+              <p>Nutricionista, psicóloga e mais — espaço para tirar dúvidas com quem entende.</p>
+            </div>
+          </div>
+          <div class="card-feature">
+            <div class="icon">📍</div>
+            <div>
+              <h3>Eventos por toda POA</h3>
+              <p>Rolês por Porto Alegre e região sugeridos pelas próprias gurias da comunidade.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como participar -->
+  <section id="como">
+    <div class="container">
+      <span class="section-tag">Como funciona</span>
+      <h2>Como entrar?</h2>
+      <p class="lead">Pedimos uma taxa fixa mensal de <strong style="color:var(--blue)">R$20,00</strong>. Com esse valor compramos os materiais para os eventos — tintas, pincéis, guardanapos, jornais — e o que sobra é reinvestido na comunidade: coolers, térmicas e powerbanks para os rolês externos.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Preencha o formulário</h3>
+            <p>Conta um pouco sobre você lá na seção de inscrição. É rapidinho!</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Receba o acesso</h3>
+            <p>Você receberá o link para entrar no grupo da comunidade.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Se apresente</h3>
+            <p>Conta quem você é e comece a se conectar com as outras gurias!</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Participe dos eventos</h3>
+            <p>Fique de olho na agenda e venha nos encontros todo mês.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Eventos passados -->
+  <section id="eventos-passados">
+    <div class="container">
+      <span class="section-tag" style="background:var(--pink); color:var(--blue);">Nossos encontros</span>
+      <h2>Eventos que já aconteceram</h2>
+      <p class="lead">Cada encontro é uma memória afetiva. Olha só o que já vivemos juntas!</p>
+
+      <div class="gallery-scroll">
+        <div class="gallery-item">
+          <div class="evt-icon">☕</div>
+          <h3>Café com Gurias</h3>
+          <p>Primeiro encontro presencial da comunidade. Risadas, trocas e muita conexão!</p>
+          <span class="evt-date">JAN 2025</span>
+        </div>
+        <div class="gallery-item">
+          <div class="evt-icon">🎤</div>
+          <h3>Roda de Conversa</h3>
+          <p>Papo aberto sobre autoconhecimento, propósito e o que nos move no dia a dia.</p>
+          <span class="evt-date">FEV 2025</span>
+        </div>
+        <div class="gallery-item">
+          <div class="evt-icon">🌸</div>
+          <h3>Workshop de Bem-estar</h3>
+          <p>Práticas de autocuidado e bem-estar para equilibrar vida pessoal e profissional.</p>
+          <span class="evt-date">MAR 2025</span>
+        </div>
+        <div class="gallery-item">
+          <div class="evt-icon">🎉</div>
+          <h3>Aniversário da Comunidade</h3>
+          <p>Celebração de 1 ano com presença especial e muita troca entre as gurias!</p>
+          <span class="evt-date">ABR 2025</span>
+        </div>
+      </div>
+      <p class="scroll-hint">← deslize para ver mais →</p>
+    </div>
+  </section>
+
+  <!-- Agenda -->
+  <section id="agenda">
+    <div class="container">
+      <span class="section-tag">Próximos eventos</span>
+      <h2>Agenda de eventos</h2>
+      <p class="lead">Marque na agenda e não perca nenhum encontro!</p>
+
+      <div class="agenda-list">
+        <div class="agenda-item">
+          <div class="agenda-date">
+            <div class="day">22</div>
+            <div class="month">Mar</div>
+          </div>
+          <div class="agenda-info">
+            <h3>Café com Gurias — Março</h3>
+            <p>Encontro mensal de conexão e bate-papo entre as participantes.</p>
+            <span class="agenda-badge">Presencial</span>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date">
+            <div class="day">05</div>
+            <div class="month">Abr</div>
+          </div>
+          <div class="agenda-info">
+            <h3>Roda de Conversa Online</h3>
+            <p>"Como criar conexões reais num mundo digital?" — Participe de onde estiver!</p>
+            <span class="agenda-badge">Online</span>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date">
+            <div class="day">19</div>
+            <div class="month">Abr</div>
+          </div>
+          <div class="agenda-info">
+            <h3>Workshop: Cuide-se, Guria!</h3>
+            <p>Tarde de bem-estar, autocuidado e troca de experiências entre as gurias.</p>
+            <span class="agenda-badge">Presencial</span>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date">
+            <div class="day">10</div>
+            <div class="month">Mai</div>
+          </div>
+          <div class="agenda-info">
+            <h3>Encontro Especial de Mães</h3>
+            <p>Celebração do Dia das Mães com um encontro especial para as mamães.</p>
+            <span class="agenda-badge">Presencial</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Instagram — só aparece quando BEHOLD_ID estiver configurado -->
+  <section id="instagram" style="display:none;">
+    <div class="container">
+      <span class="section-tag">Nossas redes</span>
+      <h2>No Instagram</h2>
+      <a href="https://instagram.com/guriascommunity" target="_blank" rel="noopener" class="ig-handle">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        @guriascommunity
+      </a>
+      <div id="behold-widget"></div>
+    </div>
+  </section>
+
+  <!-- Sugestões -->
+  <section id="sugestoes">
+    <div class="container">
+      <span class="section-tag">Sua voz importa</span>
+      <h2>Espaço para sugestões</h2>
+      <p class="lead">A comunidade é feita por todas nós. Tem uma ideia, feedback ou sugestão? Conta pra gente!</p>
+
+      <div class="form-card">
+        <form onsubmit="handleSugestao(event)">
+          <div class="form-group">
+            <label for="sug-nome">Seu nome</label>
+            <input type="text" id="sug-nome" placeholder="Como você se chama?" required autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label for="sug-tipo">Tipo de sugestão</label>
+            <select id="sug-tipo">
+              <option value="">Selecione...</option>
+              <option>Ideia de evento</option>
+              <option>Tema para roda de conversa</option>
+              <option>Melhoria na comunidade</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sug-msg">Sua sugestão</label>
+            <textarea id="sug-msg" placeholder="Conta tudo! Toda ideia é bem-vinda 💜" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-pink">Enviar sugestão</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Inscrição -->
+  <section id="inscricao">
+    <div class="container">
+      <span class="section-tag" style="background:var(--pink-dark); color:var(--white);">Faça parte</span>
+      <h2>Quero ser uma Guria!</h2>
+      <p class="lead">Preencha o formulário abaixo e entre para a nossa comunidade. A gente mal pode esperar para te conhecer!</p>
+
+      <div class="form-card">
+        <form onsubmit="handleInscricao(event)">
+          <div class="form-group">
+            <label for="insc-email">E-mail *</label>
+            <input type="email" id="insc-email" placeholder="seu@email.com" required autocomplete="email" inputmode="email" />
+          </div>
+          <div class="form-group">
+            <label for="insc-whatsapp">WhatsApp *</label>
+            <input type="tel" id="insc-whatsapp" placeholder="(51) 99999-9999" required autocomplete="tel" inputmode="tel" />
+          </div>
+          <div class="form-group">
+            <label for="insc-nome">Me conte mais de você *</label>
+            <textarea id="insc-nome" placeholder="Quem é você? Conta um pouco!" required style="min-height:80px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="insc-curte">O que tu curte?</label>
+            <textarea id="insc-curte" placeholder="Livros, séries, rolês, comida... tudo vale!" style="min-height:80px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="insc-como">Como achou a comunidade?</label>
+            <select id="insc-como">
+              <option value="">Selecione...</option>
+              <option>Instagram</option>
+              <option>Indicação de amiga</option>
+              <option>WhatsApp</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="insc-busca">O que você busca com a comunidade?</label>
+            <textarea id="insc-busca" placeholder="O que te trouxe até aqui? ✨" style="min-height:80px;"></textarea>
+          </div>
+          <p style="font-size:.8rem; color:rgba(255,255,255,.5); margin-bottom:1rem;">* Campos obrigatórios</p>
+          <button type="submit" class="btn">Quero entrar! ✨</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Feito com 💜 pela <strong>Gurias Community</strong> &nbsp;·&nbsp; © 2025</p>
+  </footer>
+
+  <!-- Bottom tab bar (mobile only) -->
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <a href="#sobre"            class="tab active" data-section="sobre">
+      <span class="tab-icon">💜</span>Sobre
+    </a>
+    <a href="#como"             class="tab" data-section="como">
+      <span class="tab-icon">👋</span>Como
+    </a>
+    <a href="#eventos-passados" class="tab" data-section="eventos-passados">
+      <span class="tab-icon">🎉</span>Eventos
+    </a>
+    <a href="#agenda"           class="tab" data-section="agenda">
+      <span class="tab-icon">🗓️</span>Agenda
+    </a>
+    <a href="#inscricao"        class="tab" data-section="inscricao">
+      <span class="tab-icon">✨</span>Entrar
+    </a>
+  </nav>
+
+  <!-- Behold Instagram widget -->
+  <script>
+    // ► Cole aqui o seu Widget ID do behold.so
+    const BEHOLD_ID = '';
+
+    const igSection = document.getElementById('instagram');
+    const igNavLinks = document.querySelectorAll('a[href="#instagram"]');
+
+    if (BEHOLD_ID) {
+      // Mostra a seção e carrega o widget
+      igSection.style.display = '';
+      const script = document.createElement('script');
+      script.src = 'https://w.behold.so/widget.js';
+      script.type = 'module';
+      document.head.appendChild(script);
+      const el = document.createElement('behold-widget');
+      el.setAttribute('feed-id', BEHOLD_ID);
+      document.getElementById('behold-widget').appendChild(el);
+    } else {
+      // Esconde os links de nav que apontam para #instagram
+      igNavLinks.forEach(a => a.style.display = 'none');
+    }
+  </script>
+
+  <script>
+    /* ── Drawer ── */
+    const menuBtn = document.getElementById('menuBtn');
+    const drawer  = document.getElementById('drawer');
+    const overlay = document.getElementById('overlay');
+
+    function openDrawer()  {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+      menuBtn.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+      menuBtn.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    menuBtn.addEventListener('click', () =>
+      drawer.classList.contains('open') ? closeDrawer() : openDrawer()
+    );
+    overlay.addEventListener('click', closeDrawer);
+    document.querySelectorAll('.drawer-link').forEach(a =>
+      a.addEventListener('click', closeDrawer)
+    );
+
+    /* ── Active bottom tab on scroll ── */
+    const sectionIds = ['sobre','como','eventos-passados','agenda','instagram','sugestoes','inscricao'];
+    const tabs = document.querySelectorAll('.bottom-nav .tab');
+
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tabs.forEach(t =>
+            t.classList.toggle('active', t.dataset.section === entry.target.id)
+          );
+        }
+      });
+    }, { threshold: .35 });
+
+    sectionIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+
+    /* ── Forms ── */
+    function handleSugestao(e) {
+      e.preventDefault();
+      alert('💜 Obrigada pela sua sugestão! Ela foi recebida com muito carinho.');
+      e.target.reset();
+    }
+    function handleInscricao(e) {
+      e.preventDefault();
+      alert('🎉 Que alegria! Sua inscrição foi recebida. Fique de olho no e-mail — logo logo a gente entra em contato!');
+      e.target.reset();
+    }
+  </script>
+
+</body>
+</html>
